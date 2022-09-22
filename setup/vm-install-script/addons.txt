@@ -1,0 +1,58 @@
+1. The following iptable rule shiould be added for allowing incoming traffic to port TCP/8080:
+
+  sudo iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+
+  Save new rule:
+
+  sudo iptables-save > /etc/iptables/rules.v4
+
+  To check the current configuration of iptables the following command should be executed:
+
+  sudo iptables -L --line-numbers
+
+2. Jenkins service couldn't be start woth the following error:
+
+-- 
+-- Unit jenkins.service has failed.
+-- 
+-- The result is failed.
+Sep 21 21:48:59 devsecops systemd[1]: systemd-journald.service: Failed to add fd to store: Operation not permitt>
+Sep 21 21:48:59 devsecops jenkins[35920]: Sep 21, 2022 9:48:59 PM executable.Main verifyJavaVersion
+Sep 21 21:48:59 devsecops jenkins[35920]: SEVERE: Running with Java class version 52, which is older than the Mi>
+Sep 21 21:48:59 devsecops jenkins[35920]: java.lang.UnsupportedClassVersionError: 52.0
+Sep 21 21:48:59 devsecops jenkins[35920]:         at executable.Main.verifyJavaVersion(Main.java:145)
+Sep 21 21:48:59 devsecops jenkins[35920]:         at executable.Main.main(Main.java:109)
+Sep 21 21:48:59 devsecops jenkins[35920]: Jenkins requires Java versions [17, 11] but you are running with Java >
+Sep 21 21:48:59 devsecops jenkins[35920]: java.lang.UnsupportedClassVersionError: 52.0
+Sep 21 21:48:59 devsecops jenkins[35920]:         at executable.Main.verifyJavaVersion(Main.java:145)
+Sep 21 21:48:59 devsecops jenkins[35920]:         at executable.Main.main(Main.java:109)
+Sep 21 21:48:59 devsecops systemd[1]: Failed to start Jenkins Continuous Integration Server.
+-- Subject: Unit jenkins.service has failed
+-- Defined-By: systemd
+-- Support: https://access.redhat.com/support
+-- 
+-- Unit jenkins.service has failed.
+-- 
+-- The result is failed.
+Sep 21 21:49:00 devsecops systemd[1]: Failed to start Jenkins Continuous Integration Server.
+-- Subject: Unit jenkins.service has failed
+-- Defined-By: systemd
+-- Support: https://access.redhat.com/support
+-- 
+-- Unit jenkins.service has failed.
+-- 
+-- The result is failed.
+
+To fix this issue OpenJDK 11 should be installed:
+
+sudo yum install -y java-11 java-11-devel
+
+And configuration of Jenkins service should be changed:
+
+vi /usr/lib/systemd/system/jenkins.service
+
+Environment="JAVA_HOME=/usr/lib/jvm/java-11-openjdk-11.0.15.0.10-3.el8.x86_64"
+
+systemctl daemon-reload
+systemctl restart jenkins
+
