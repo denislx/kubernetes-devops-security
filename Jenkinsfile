@@ -27,6 +27,7 @@ pipeline {
       }
     }
 
+/*  // Alternative mathod
     stage('Docker image build and push') {
       steps {
         sh 'docker build -t $registry:latest .'
@@ -37,12 +38,14 @@ pipeline {
         }
       }
     }
-
-//          // Alretnative method
-//          dockerImage = docker.build registry + ":$BUILD_NUMBER"
-//          docker.withRegistry( '', registryCredential ) {
-//            dockerImage.push()
-//          }
-
+ */
+    stage('Docker image build and push') {
+      steps {
+        dockerImage = docker.build registry + ":latest"
+        docker.withRegistry( '', registryCredential ) {
+          dockerImage.push()
+        }
+      }
+    }
   }
 }
