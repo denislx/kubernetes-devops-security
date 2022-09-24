@@ -52,10 +52,9 @@ pipeline {
 
     stage('Docker image build and push') {
       steps {
-          withDockerRegistry([credentialsId: registryCredential, url: ""]) {
-            sh "docker build -t $registry:latest ."
-            sh "docker push $registry:latest"
-          }
+        withDockerRegistry([credentialsId: registryCredential, url: ""]) {
+          sh "docker build -t $registry:latest ."
+          sh "docker push $registry:latest"
         }
       }
     }
