@@ -41,7 +41,7 @@ pipeline {
  */
     stage('Docker image build and push') {
       steps {
-        sh 'echo'
+        docker.build "denislx/java-app:latest"
         // docker.build registry + ":latest"
         // docker.withRegistry( '', registryCredential ) {
         //   dockerImage.push()
