@@ -41,6 +41,7 @@ pipeline {
  */
     stage('Docker image build and push') {
       steps {
+        sh 'echo'
         // docker.build registry + ":latest"
         // docker.withRegistry( '', registryCredential ) {
         //   dockerImage.push()
