@@ -1,10 +1,6 @@
 pipeline {
   agent any
 
-  environment {
-    dockerhub=credentials('dockerhub')
-  }
-
   stages {
     stage('Build Artifact') {
       steps {
@@ -28,11 +24,11 @@ pipeline {
     stage('Docker image build and push') {
       steps {
         sh 'docker build -t denislx/java-app:latest .'
-        sh 'echo PWS: $dockerhub_PWS'
-        sh 'echo USR: $dockerhub_USR'
-        sh 'echo $dockerhub_PWS | docker login -u $dockerhub_USR --password-stdin'
-        sh 'docker push denislx/java-app:latest'
-      }
+      	withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+        	sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+          sh 'docker push denislx/java-app:latest'
+        }
+
     }
   }
 }
