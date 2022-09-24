@@ -42,9 +42,9 @@ pipeline {
     stage('Docker image build and push') {
       steps {
         dockerImage = docker.build registry + ":latest"
-        docker.withRegistry( '', registryCredential ) {
-          dockerImage.push()
-        }
+        // docker.withRegistry( '', registryCredential ) {
+        //   dockerImage.push()
+        // }
       }
     }
   }
