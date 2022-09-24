@@ -25,7 +25,7 @@ pipeline {
       steps {
         sh 'docker build -t denislx/java-app:latest .'
       	withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-        	sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+        	sh "echo ${env.dockerHubPassword} | docker login -u ${env.dockerHubUser} --password-stdin "
           sh 'docker push denislx/java-app:latest'
         }
       }
