@@ -42,11 +42,10 @@ pipeline {
     stage('Docker image build and push') {
       steps {
         script {
-          docker.build "denislx/java-app:latest"
-          // docker.build registry + ":latest"
-          // docker.withRegistry( '', registryCredential ) {
-          //   dockerImage.push()
-          // }
+          docker.build registry + ":latest"
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
         }
       }
     }
