@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  environment {
+    dockerhub=credentials('dockerhub')
+  }
+
   stages {
     stage('Build Artifact') {
       steps {
