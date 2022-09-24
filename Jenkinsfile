@@ -1,6 +1,12 @@
 pipeline {
   agent any
 
+  environment {
+    registry = "denislx/java-app"
+    registryCredential = 'dockerhub'
+    dockerImage = ''
+  }
+
   stages {
     stage('Build Artifact') {
       steps {
@@ -23,12 +29,20 @@ pipeline {
 
     stage('Docker image build and push') {
       steps {
-        sh 'docker build -t denislx/java-app:latest .'
+        sh 'docker build -t $registry:latest .'
+
       	withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
         	sh "echo ${env.dockerHubPassword} | docker login -u ${env.dockerHubUser} --password-stdin "
-          sh 'docker push denislx/java-app:latest'
+          sh 'docker push $registry:latest'
         }
       }
     }
+
+//          // Alretnative method
+//          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+//          docker.withRegistry( '', registryCredential ) {
+//            dockerImage.push()
+//          }
+
   }
 }
