@@ -27,18 +27,18 @@ pipeline {
       }
     }
 
-/*  // Alternative less secure method
-    stage('Docker image build and push') {
-      steps {
-        sh 'docker build -t $registry:latest .'
+    // // Alternative less secure method
+    // stage('Docker image build and push') {
+    //   steps {
+    //     sh 'docker build -t $registry:latest .'
 
-      	withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-        	sh "echo ${env.dockerHubPassword} | docker login -u ${env.dockerHubUser} --password-stdin "
-          sh 'docker push $registry:latest'
-        }
-      }
-    }
- */
+    //   	withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+    //     	sh "echo ${env.dockerHubPassword} | docker login -u ${env.dockerHubUser} --password-stdin "
+    //       sh 'docker push $registry:latest'
+    //     }
+    //   }
+    // }
+ 
     stage('Docker image build and push') {
       steps {
         script {
@@ -50,10 +50,17 @@ pipeline {
       }
     }
 
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $registry:latest"
+    // stage('Remove Unused docker image') {
+    //   steps{
+    //     sh "docker rmi $registry:latest"
+    //   }
+    // }
+
+    stage('Kubernetes Deployment - DEV') {
+      steps {
+        sh "sed -i 's#REPLACE_ME#$registry:latest#g' k8s_deployment_service.yaml"
+        sh "kubectl apply -f k8s_deployment_service.yaml"
       }
-    }
+    }    
   }
 }
