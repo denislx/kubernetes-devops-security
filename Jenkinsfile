@@ -27,7 +27,7 @@ pipeline {
       }
     }
 
-    // // Alternative less secure method
+    // // Alternative method 1
     // stage('Docker image build and push') {
     //   steps {
     //     sh 'docker build -t $registry:latest .'
@@ -38,23 +38,24 @@ pipeline {
     //     }
     //   }
     // }
- 
+
+    // // Alternative method 1
     // stage('Docker image build and push') {
     //   steps {
-    //     script {
-    //       docker.withRegistry( '', registryCredential ) {
-    //         dockerImage = docker.build registry + ":latest"
-    //         dockerImage.push()
-    //       }
+    //     withDockerRegistry([credentialsId: registryCredential, url: ""]) {
+    //       sh "docker build -t $registry:latest ."
+    //       sh "docker push $registry:latest"
     //     }
     //   }
     // }
 
     stage('Docker image build and push') {
       steps {
-        withDockerRegistry([credentialsId: registryCredential, url: ""]) {
-          sh "docker build -t $registry:latest ."
-          sh "docker push $registry:latest"
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage = docker.build registry + ":latest"
+            dockerImage.push()
+          }
         }
       }
     }
