@@ -27,7 +27,7 @@ pipeline {
       }
     }
 
-/*  // Alternative mathod
+/*  // Alternative less secure method
     stage('Docker image build and push') {
       steps {
         sh 'docker build -t $registry:latest .'
