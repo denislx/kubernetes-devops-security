@@ -39,12 +39,22 @@ pipeline {
     //   }
     // }
  
+    // stage('Docker image build and push') {
+    //   steps {
+    //     script {
+    //       docker.withRegistry( '', registryCredential ) {
+    //         dockerImage = docker.build registry + ":latest"
+    //         dockerImage.push()
+    //       }
+    //     }
+    //   }
+    // }
+
     stage('Docker image build and push') {
       steps {
-        script {
-          docker.withRegistry([credentialsId: registryCredential, url: ""]) {
-            dockerImage = docker.build registry + ":latest"
-            dockerImage.push()
+          withDockerRegistry([credentialsId: registryCredential, url: ""]) {
+            sh "docker build -t $registry:latest ."
+            sh "docker push $registry:latest"
           }
         }
       }
@@ -58,8 +68,8 @@ pipeline {
 
     stage('Kubernetes Deployment - DEV') {
       steps {
+        sh "sed -i 's#REPLACE_ME#$registry:latest#g' k8s_deployment_service.yaml"
         withKubeConfig([credentialsId: 'kubeconfig']) {
-          sh "sed -i 's#REPLACE_ME#$registry:latest#g' k8s_deployment_service.yaml"
           sh "kubectl apply -f k8s_deployment_service.yaml"
         }
       }
